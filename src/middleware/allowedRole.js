@@ -1,4 +1,4 @@
-const sendResponse = require("../helper/response");
+const sendResponse = require("../helper/sendResponse");
 
 module.exports = (...allowedRole) => {
     return (req, res, next) => {

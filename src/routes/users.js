@@ -2,6 +2,7 @@ const express = require("express");
 const usersRouter = express.Router();
 const validate = require("../middleware/validate");
 const isLogin = require("../middleware/isLogin");
+const allowedRole = require("../middleware/allowedRole.js");
 
 const multer = require("multer");
 const cloudinaryUploader = require("../middleware/cloudinaryProfile");
