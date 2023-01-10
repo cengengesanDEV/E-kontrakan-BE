@@ -88,11 +88,11 @@ const profile = (body, token) => {
   });
 };
 
-const deleteUsers = (token,id) => {
+const deleteUsers = (token, id) => {
   return new Promise((resolve, reject) => {
     const query = "update users set deleted_at = $1 where id = $2";
     const timestamp = Date.now() / 1000;
-    postgreDb.query(query, [timestamp,id], (error, result) => {
+    postgreDb.query(query, [timestamp, id], (error, result) => {
       if (error) {
         console.log(error);
         return reject({ status: 500, msg: "internal server error" });
@@ -106,10 +106,25 @@ const deleteUsers = (token,id) => {
   });
 };
 
+const getUsersById = (id) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      "select role,full_name,phone_number,email,image from users where id = $1";
+    postgreDb.query(query, [id], (error, result) => {
+      if (error) {
+        console.log(error);
+        return reject({ status: 500, msg: "internal server error" });
+      }
+      return resolve({ status: 200, msg: "data found", data: result.rows[0] });
+    });
+  });
+};
+
 const userRepo = {
   register,
   profile,
-  deleteUsers
+  deleteUsers,
+  getUsersById
 };
 
 module.exports = userRepo;
