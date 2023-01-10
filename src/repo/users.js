@@ -115,7 +115,7 @@ const getUsersById = (id) => {
         console.log(error);
         return reject({ status: 500, msg: "internal server error" });
       }
-      return resolve({ status: 200, msg: "data found", data: result.rows[0] });
+      return resolve({ status: 200, msg: "data found", data: result.rows });
     });
   });
 };
