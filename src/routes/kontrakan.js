@@ -26,7 +26,7 @@ const {
   postCategory,
 } = require("../controller/kontrakan");
 
-kontrakanRouter.get("/", validate.body("province"), getAllCategory);
+kontrakanRouter.get("/:province", validate.params("province"), getAllCategory);
 kontrakanRouter.get("/category/:id", getCategoryById);
 kontrakanRouter.get("/detail/:id", getDetailById);
 kontrakanRouter.post("/category",isLogin(),allowedRole("owner"),uploadFile,cloudinaryCategory,postCategory);
