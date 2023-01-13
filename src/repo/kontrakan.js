@@ -51,7 +51,7 @@ const postCategory = (id, body, image) => {
     const { kontrakan_name, description, province, detail_address } =
       body;
     const query =
-      "insert into category(id_user,kontrakan_name,description,province,detail_address,image,created_at,updated_at) values($1,$2,$3,$4,$5,$6,to_timestamp($7),to_timestamp($8))";
+      "insert into category_kontrakan(id_user,kontrakan_name,description,province,detail_address,image,created_at,updated_at) values($1,$2,$3,$4,$5,$6,to_timestamp($7),to_timestamp($8))";
     const timestamp = Date.now() / 1000;
     postgreDb.query(
       query,

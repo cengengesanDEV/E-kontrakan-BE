@@ -32,9 +32,9 @@ const getDetailById = async (req, res) => {
 
 const postCategory = async (req, res) => {
   try {
-    const { id } = req.userPayload;
+    const { user_id } = req.userPayload;
     const response = await kontrakanRepo.postCategory(
-      id,
+      user_id,
       req.body,
       req.file.secure_url
     );
