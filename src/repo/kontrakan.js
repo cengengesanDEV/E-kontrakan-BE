@@ -48,17 +48,16 @@ const getDetailById = (id) => {
 //all post
 const postCategory = (id, body, image) => {
   return new Promise((resolve, reject) => {
-    const { kontrakan_name, description, province, detail_address } =
+    const { kontrakan_name, province, detail_address } =
       body;
     const query =
-      "insert into category_kontrakan(id_user,kontrakan_name,description,province,detail_address,image,created_at,updated_at) values($1,$2,$3,$4,$5,$6,to_timestamp($7),to_timestamp($8))";
+      "insert into category_kontrakan(id_user,kontrakan_name,province,detail_address,image,created_at,updated_at) values($1,$2,$3,$4,$5,$6,to_timestamp($7),to_timestamp($8))";
     const timestamp = Date.now() / 1000;
     postgreDb.query(
       query,
       [
         id,
         kontrakan_name,
-        description,
         province,
         detail_address,
         image,
