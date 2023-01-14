@@ -13,6 +13,7 @@ function uploadFile(req, res, next) {
       console.log(err);
       return res.status(400).json({ msg: "Size to large" });
     } else if (err) {
+      console.log(err)
       return res.status(400).json({ msg: "Format Wrong" });
     }
     next();

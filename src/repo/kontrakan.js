@@ -141,10 +141,10 @@ const getDetailById = (id) => {
             fasilitas: rows.fasilitas,
             price: rows.price,
             deskripsi: rows.deskripsi,
-            image: Queryresult.rows,
+            image: [Queryresult.rows[0]],
           });
           console.log("sukses")
-          if (index === result.rows.length-2) {
+          if (index === result.rows.length-1) {
             return resolve({ status: 200, msg: "data found", data: newResult });
           }
         });
