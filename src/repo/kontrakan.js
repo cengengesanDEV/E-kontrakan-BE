@@ -58,21 +58,20 @@ const getAllCategory = (param,hostAPI) => {
                   let next = "";
                   let prev = "";
                   const dataNext = Math.ceil(result.rowCount / limit);
-                  console.log(queryresult);
-                  if (start <= result.rowCount) {
+                  if (start <= queryresult.rowCount) {
                       next = page + 1;
                   }
                   if (end > 0) {
                       prev = page - 1;
                   }
                   if (parseInt(next) <= parseInt(dataNext)) {
-                      resNext = `&${link}page=${next}&limit=${limit}`;
+                      resNext = `${link}&page=${next}&limit=${limit}`;
                   }
                   if (parseInt(prev) !== 0) {
-                      resPrev = `&${link}page=${prev}&limit=${limit}`;
+                      resPrev = `${link}&page=${prev}&limit=${limit}`;
                   }
                   let sendResponse = {
-                      dataCount: result.rowCount,
+                      dataCount: queryresult.rowCount,
                       next: resNext,
                       prev: resPrev,
                       totalPage: Math.ceil(result.rowCount / limit),
