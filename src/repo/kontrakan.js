@@ -104,7 +104,7 @@ const getAllCategory = (param, hostAPI) => {
 const getcategoryById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select id,kontrakan_name,province,detail_address,image from category_kontrakan where id_user = $1";
+      "select id,kontrakan_name,province,detail_address,image from category_kontrakan where id_user = $1 and deleted_at is null order by created_at desc";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -117,7 +117,7 @@ const getcategoryById = (id) => {
 const getDetailById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,im.image from detail_kontrakan as de inner join image_kontrakan as im on de.id = im.id_detail_kontrakan  where de.id_kontrakan = $1";
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,im.image from detail_kontrakan as de inner join image_kontrakan as im on de.id = im.id_detail_kontrakan  where de.id_kontrakan = $1 and de.deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -130,27 +130,28 @@ const getDetailById = (id) => {
 
 const getKontrakanDetails = (id) => {
   return new Promise((resolve, reject) => {
-    console.log(id)
+    console.log(id);
     const query =
-      "select id,tipe_kontrakan,fasilitas,price,deskripsi from detail_kontrakan where id = $1";
+      "select id,tipe_kontrakan,fasilitas,price,deskripsi from detail_kontrakan where id = $1 and deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
         return reject({ status: 500, msg: "internal server error" });
       }
-      let Data = {...result.rows[0]}
-      console.log(result.rows)
-      const queryImage = "select image from image_kontrakan where id_detail_kontrakan = $1"
+      let Data = { ...result.rows[0] };
+      console.log(result.rows);
+      const queryImage =
+        "select image from image_kontrakan where id_detail_kontrakan = $1";
       postgreDb.query(queryImage, [id], (error, result) => {
         if (error) {
           console.log(error);
           return reject({ status: 500, msg: "internal server error" });
         }
         const image = [];
-        result.rows.forEach((e)=> image.push(e.image))
-        Data = {...Data, image: image}
-        return resolve({ status: 200, msg: "data found", data: Data})
-      })
+        result.rows.forEach((e) => image.push(e.image));
+        Data = { ...Data, image: image };
+        return resolve({ status: 200, msg: "data found", data: Data });
+      });
     });
   });
 };
@@ -236,13 +237,23 @@ const postDetail = (req) => {
     );
   });
 };
+
+// delete
+
+const deleteCategory = (req, res) => {
+  return new Promise((resolve, reject) => {
+    const { id } = req.params;
+    const query = "delete from category_kontrakan where id_user=$1";
+    postgreDb.query(query, [id], (error, result) => {});
+  });
+};
 const kontrakanRepo = {
   getAllCategory,
   getcategoryById,
   getDetailById,
+  getKontrakanDetails,
   postCategory,
   postDetail,
-  getKontrakanDetails
 };
 
 module.exports = kontrakanRepo;
