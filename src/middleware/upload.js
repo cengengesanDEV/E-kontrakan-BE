@@ -54,9 +54,11 @@ const memoryUpload = multer({
 
 const errorHandler = (err, res, next) => {
     if (err instanceof multer.MulterError) {
+        console.log(err)
         return res.status(500).json({ status: "Upload Error", msg: err.message });
     }
     if (err) {
+        console.log(err)
         return res
             .status(500)
             .json({ status: "Internal Server Error", msg: err.message });
