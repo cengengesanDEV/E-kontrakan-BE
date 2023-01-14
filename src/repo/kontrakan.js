@@ -193,12 +193,10 @@ const postDetail = (req) => {
   return new Promise((resolve, reject) => {
     const { id_kontrakan, tipe_kontrakan, fasilitas, price, deskripsi } =
       req.body;
-      const arrayFasilitas = [fasilitas]
-      console.log(arrayFasilitas);
     const timeStamp = Date.now() / 1000;
     const images = req.file;
     console.log(fasilitas);
-    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,ARRAY ${arrayFasilitas},$3,$4,to_timestamp($5),to_timestamp($6)) returning *`;
+    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,ARRAY ${fasilitas},$3,$4,to_timestamp($5),to_timestamp($6)) returning *`;
     postgreDb.query(
       query,
       [id_kontrakan, tipe_kontrakan, price, deskripsi, timeStamp, timeStamp],
