@@ -63,13 +63,13 @@ const register = (body) => {
 
 const profile = (body, token) => {
   return new Promise((resolve, reject) => {
-    let query = "update profile set ";
+    let query = "update users set ";
     const values = [];
     Object.keys(body).forEach((key, idx, array) => {
       if (idx === array.length - 1) {
-        query += `${key} = $${idx + 1} where users_id = $${
+        query += `${key} = $${idx + 1} where id = $${
           idx + 2
-        } returning *`;
+        } returning full_name,location,role,email,address,id,phone_number,image,gender`;
         values.push(body[key], token);
         return;
       }
