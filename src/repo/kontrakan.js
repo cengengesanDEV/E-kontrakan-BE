@@ -124,8 +124,9 @@ const getDetailById = (id) => {
         return reject({ status: 500, msg: "internal server error" });
       }
       let newResult = [];
-      result.rows.map((rows,index) => {
+      result.rows.map((rows, index) => {
         let id = rows.id;
+        console.log(id)
         const query =
           "select image from image_kontrakan where id_detail_kontrakan = $1";
         postgreDb.query(query, [id], (error, Queryresult) => {
@@ -133,21 +134,8 @@ const getDetailById = (id) => {
             console.log(error);
             return reject({ status: 500, msg: "internal server error" });
           }
-          console.log(index)
-          if (index == result.rows.length) {
-            console.log("first")
-            newResult.push(...newResult,{
-              id: rows.id,
-              tipe_kontrakan: rows.tipe_kontrakan,
-              fasilitas: rows.fasilitas,
-              price: rows.price,
-              deskripsi: rows.deskripsi,
-              image: Queryresult.rows,
-            });
-            return resolve({ status: 200, msg: "data found", data: newResult });
-          }
-          console.log("second")
-          return newResult.push(...newResult,{
+          console.log("jalan")
+          newResult.push({
             id: rows.id,
             tipe_kontrakan: rows.tipe_kontrakan,
             fasilitas: rows.fasilitas,
@@ -155,7 +143,12 @@ const getDetailById = (id) => {
             deskripsi: rows.deskripsi,
             image: Queryresult.rows,
           });
-        })});
+          console.log("sukses")
+          if (index === result.rows.length-2) {
+            return resolve({ status: 200, msg: "data found", data: newResult });
+          }
+        });
+      });
     });
   });
 };

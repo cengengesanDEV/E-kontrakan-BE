@@ -22,7 +22,7 @@ function uploadFile(req, res, next) {
 const { register,profile,deleteProfile , getDataById} = require("../controller/users.js");
 
 usersRouter.post("/",validate.body("email", "passwords", "phone_number", "role"),register);
-usersRouter.patch("/profile",isLogin(),allowedRole("user"),uploadFile,cloudinaryUploader,validate.body("full_name","image","location","address","gender"),profile);
+usersRouter.patch("/profile",isLogin(),allowedRole("user"),validate.body("full_name","image","location","address","gender"),uploadFile,cloudinaryUploader,profile);
 usersRouter.patch("/delete/:id",isLogin(),deleteProfile);
 usersRouter.get("/",isLogin(),getDataById)
 
