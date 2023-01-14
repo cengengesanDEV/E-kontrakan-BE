@@ -30,6 +30,17 @@ const getDetailById = async (req, res) => {
   }
 };
 
+const getKontrakanDetails = async (req,res) => {
+  try {
+    const { id } = req.params;
+    const response = await kontrakanRepo.getKontrakanDetails(id);
+    sendResponse.success(res, response.status, response);
+  } catch (error) {
+    console.log(error)
+    sendResponse.error(res, error.status, error);
+  }
+}
+
 const postCategory = async (req, res) => {
   try {
     const { user_id } = req.userPayload;
@@ -58,7 +69,8 @@ const kontrakanController = {
   getCategoryById,
   getDetailById,
   postCategory,
-  postDetail
+  postDetail,
+  getKontrakanDetails
 };
 
 module.exports = kontrakanController;
