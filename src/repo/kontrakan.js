@@ -104,7 +104,7 @@ const getAllCategory = (param, hostAPI) => {
 const getcategoryById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select id,kontrakan_name,province,detail_address,image from category_kontrakan where id_user = $1 and deleted_at is null order by created_at desc";
+      "select id,kontrakan_name,province,detail_address,image from category_kontrakan where id_user = $1 and deleted_at is null order by id desc";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
