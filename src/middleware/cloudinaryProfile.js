@@ -24,7 +24,7 @@ const uploader = async (req, res, next) => {
         req.file = result;
         next();
     } catch (err) {
-        console.log(err.message);
+        console.log(err);
         res.status(err).json({ msg: "Internal Server Error" });
     }
 };
