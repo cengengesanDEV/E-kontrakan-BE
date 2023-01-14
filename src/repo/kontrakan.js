@@ -194,6 +194,7 @@ const postDetail = (req) => {
     const { id_kontrakan, tipe_kontrakan, fasilitas, price, deskripsi } =
       req.body;
       const arrayFasilitas = [fasilitas]
+      console.log(arrayFasilitas);
     const timeStamp = Date.now() / 1000;
     const images = req.file;
     console.log(fasilitas);
