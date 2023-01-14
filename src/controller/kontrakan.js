@@ -3,8 +3,8 @@ const sendResponse = require("../helper/sendResponse");
 
 const getAllCategory = async (req, res) => {
   try {
-    const { province } = req.body;
-    const response = await kontrakanRepo.getAllCategory(province);
+    const hostApi = `${req.protocol}://${req.hostname}`;
+    const response = await kontrakanRepo.getAllCategory(req.query, hostApi);
     sendResponse.success(res, response.status, response);
   } catch (error) {
     sendResponse.error(res, error.status, error);
@@ -44,11 +44,21 @@ const postCategory = async (req, res) => {
   }
 };
 
+const postDetail = async (req, res) => {
+  try {
+    const response = await kontrakanRepo.postDetail(req);
+    sendResponse.success(res, response.status, response);
+  } catch (error) {
+    sendResponse.error(res, error.status, error);
+  }
+};
+
 const kontrakanController = {
   getAllCategory,
   getCategoryById,
   getDetailById,
-  postCategory
+  postCategory,
+  postDetail
 };
 
 module.exports = kontrakanController;
