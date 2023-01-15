@@ -98,6 +98,23 @@ const patchcategory = async (req, res) => {
   }
 };
 
+const deleteCategory = async (req, res) => {
+  try {
+    const response = await kontrakanRepo.deleteCategory(req.params.id);
+    sendResponse.success(res, response.status, response);
+  } catch (error) {
+    sendResponse.error(res, error.status, error);
+  }
+};
+
+const deleteDetail = async (req,res)=> {
+  try {
+    const response = await kontrakanRepo.deleteDetail(req.params.id);
+    sendResponse.success(res, response.status, response);
+  } catch (error) {
+    sendResponse.error(res, error.status, error);}
+}
+
 const kontrakanController = {
   getAllCategory,
   getCategoryById,
@@ -107,6 +124,8 @@ const kontrakanController = {
   postDetail,
   getKontrakanDetails,
   patchcategory,
+  deleteCategory,
+  deleteDetail
 };
 
 module.exports = kontrakanController;

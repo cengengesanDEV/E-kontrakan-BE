@@ -28,7 +28,10 @@ const {
   postCategory,
   postDetail,
   getKontrakanDetails,
-  getCategoryId,patchcategory
+  getCategoryId,
+  patchcategory,
+  deleteCategory,
+  deleteDetail
 } = require("../controller/kontrakan");
 
 kontrakanRouter.get("/", getAllCategory);
@@ -39,5 +42,7 @@ kontrakanRouter.post('/detail',isLogin(),allowedRole("owner"),uploadMultiple,mul
 kontrakanRouter.get("/kontrakan/:id", getKontrakanDetails);
 kontrakanRouter.get('/kontrakan/category/:id', getCategoryId);
 kontrakanRouter.patch('/category/:id', isLogin(),allowedRole("owner"),uploadFile,cloudinaryCategory,patchcategory);
+kontrakanRouter.patch('/delete/category/:id',deleteCategory )
+kontrakanRouter.patch('/delete/detail/:id',deleteDetail )
 
 module.exports = kontrakanRouter;
