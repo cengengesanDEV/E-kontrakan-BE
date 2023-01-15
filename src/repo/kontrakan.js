@@ -132,7 +132,7 @@ const getCategoryId = (id) => {
 const getDetailById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,im.image from detail_kontrakan as de inner join image_kontrakan as im on de.id = im.id_detail_kontrakan  where de.id_kontrakan = $1 and de.deleted_at is null";
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,im.image from detail_kontrakan as de inner join image_kontrakan as im on de.id = im.id_detail_kontrakan  where de.id_kontrakan = $1 and de.deleted_at is null ORDER BY im.id ";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -147,7 +147,7 @@ const getKontrakanDetails = (id) => {
   return new Promise((resolve, reject) => {
     console.log(id);
     const query =
-      "select id,tipe_kontrakan,fasilitas,price,deskripsi from detail_kontrakan where id = $1 and deleted_at is null";
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where de.id = $1 and de.deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
