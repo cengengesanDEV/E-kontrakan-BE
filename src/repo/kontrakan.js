@@ -4,7 +4,7 @@ const postgreDb = require("../config/postgre"); //koneksi database
 const getAllCategory = (param, hostAPI) => {
   return new Promise((resolve, reject) => {
     let query =
-      "select de.id,de.tipe_kontrakan,de.price,ca.province,ca.detail_address,ca.image from detail_kontrakan as de inner join category_kontrakan as ca on ca.id = de.id_kontrakan where de.deleted_at is null ";
+      "select de.id,de.tipe_kontrakan,de.price,ca.province,ca.detail_address,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) as image from detail_kontrakan as de inner join category_kontrakan as ca on ca.id = de.id_kontrakan where de.deleted_at is null ";
     let link = `${hostAPI}/api/kontrakan?`;
     if (param.province) {
       query += `and ca.province = '${param.province}' `;
@@ -147,7 +147,7 @@ const getKontrakanDetails = (id) => {
   return new Promise((resolve, reject) => {
     console.log(id);
     const query =
-      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where de.id = $1 and de.deleted_at is null";
+      "select de.id,ca.kontrakan_name,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where de.id = $1 and de.deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -210,11 +210,10 @@ const postDetail = (req) => {
       req.body;
     const timeStamp = Date.now() / 1000;
     const images = req.file;
-    const parse = JSON.parse(fasilitas)
-    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,ARRAY[$3],$4,$5,to_timestamp($6),to_timestamp($7)) returning *`;
+    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,ARRAY${fasilitas},$3,$4,to_timestamp($5),to_timestamp($6)) returning *`;
     postgreDb.query(
       query,
-      [id_kontrakan, tipe_kontrakan, parse,price, deskripsi, timeStamp, timeStamp],
+      [id_kontrakan, tipe_kontrakan, price, deskripsi, timeStamp, timeStamp],
       (error, result) => {
         if (error) {
           console.log(error);
@@ -263,6 +262,8 @@ const deleteCategory = (req, res) => {
     postgreDb.query(query, [id], (error, result) => {});
   });
 };
+
+
 const kontrakanRepo = {
   getAllCategory,
   getcategoryById,
