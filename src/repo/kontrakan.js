@@ -123,7 +123,8 @@ const getCategoryId = (id) => {
         console.log(error);
         return reject({ status: 500, msg: "internal server error" });
       }
-      return resolve({ status: 200, msg: "data found", data: result.rows });
+      const imagearray = [result.rows[0].image]
+      return resolve({ status: 200, msg: "data found", data: [...result.rows[0],imagearray] });
     });
   });
 };
