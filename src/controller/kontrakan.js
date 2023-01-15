@@ -75,6 +75,29 @@ const postDetail = async (req, res) => {
   }
 };
 
+const patchcategory = async (req, res) => {
+  try {
+    // push all body lalu if disini mengubah body.image menjadi file.patch
+    // if (req.file) {
+    //     req.body.image = `${req.file.filename}`;
+    // }
+    if (req.file) {
+      var image = `/${req.file.public_id}.${req.file.format}`; //ubah filename
+      req.body.image = req.file.secure_url;
+    }
+
+    const response = await kontrakanRepo.patchCategory(req.body, req.params.id);
+    sendResponse.success(res, 200, {
+      msg: "Edit category kontrakan Success",
+      data: response.rows,
+      filename: image,
+    });
+  } catch (err) {
+    console.log(err);
+    sendResponse.error(res, 500, "internal server error");
+  }
+};
+
 const kontrakanController = {
   getAllCategory,
   getCategoryById,
@@ -82,7 +105,8 @@ const kontrakanController = {
   getCategoryId,
   postCategory,
   postDetail,
-  getKontrakanDetails
+  getKontrakanDetails,
+  patchcategory,
 };
 
 module.exports = kontrakanController;

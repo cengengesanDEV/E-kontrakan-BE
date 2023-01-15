@@ -253,16 +253,33 @@ const postDetail = (req) => {
   });
 };
 
-// delete
-
-const deleteCategory = (req, res) => {
+// patch
+const patchCategory = (body, id) => {
   return new Promise((resolve, reject) => {
-    const { id } = req.params;
-    const query = "delete from category_kontrakan where id_user=$1";
-    postgreDb.query(query, [id], (error, result) => {});
+    let query = "update category_kontrakan set ";
+    const values = [];
+    Object.keys(body).forEach((key, idx, array) => {
+      if (idx === array.length - 1) {
+        query += `${key} = $${idx + 1} where id = $${
+          idx + 2
+        } returning *`;
+        values.push(body[key], id);
+        return;
+      }
+      query += `${key} = $${idx + 1},`;
+      values.push(body[key]);
+    });
+    postgreDb
+      .query(query, values)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
   });
 };
-
 
 const kontrakanRepo = {
   getAllCategory,
@@ -272,6 +289,7 @@ const kontrakanRepo = {
   getKontrakanDetails,
   postCategory,
   postDetail,
+  patchCategory
 };
 
 module.exports = kontrakanRepo;
