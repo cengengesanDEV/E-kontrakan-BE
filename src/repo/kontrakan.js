@@ -114,6 +114,21 @@ const getcategoryById = (id) => {
     });
   });
 };
+
+const getCategoryId = (id) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      "select id,kontrakan_name,province,detail_address,image from category_kontrakan where id = $1 and deleted_at is null";
+    postgreDb.query(query, [id], (error, result) => {
+      if (error) {
+        console.log(error);
+        return reject({ status: 500, msg: "internal server error" });
+      }
+      return resolve({ status: 200, msg: "data found", data: result.rows });
+    });
+  });
+}
+
 const getDetailById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
@@ -252,6 +267,7 @@ const kontrakanRepo = {
   getAllCategory,
   getcategoryById,
   getDetailById,
+  getCategoryId,
   getKontrakanDetails,
   postCategory,
   postDetail,

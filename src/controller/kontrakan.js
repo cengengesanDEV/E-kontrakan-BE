@@ -20,6 +20,17 @@ const getCategoryById = async (req, res) => {
     sendResponse.error(res, error.status, error);
   }
 };
+
+const getCategoryId = async(req,res)=> {
+  try {
+    const { id } = req.params;
+    const response = await kontrakanRepo.getCategoryId(id);
+    sendResponse.success(res, response.status, response);
+  } catch (error) {
+    console.log(error)
+    sendResponse.error(res, error.status, error);
+  }
+}
 const getDetailById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -68,6 +79,7 @@ const kontrakanController = {
   getAllCategory,
   getCategoryById,
   getDetailById,
+  getCategoryId,
   postCategory,
   postDetail,
   getKontrakanDetails
