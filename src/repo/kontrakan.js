@@ -132,7 +132,7 @@ const getCategoryId = (id) => {
 const getDetailById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,im.image from detail_kontrakan as de inner join image_kontrakan as im on de.id = im.id_detail_kontrakan  where de.id_kontrakan = $1 and de.deleted_at is null ORDER BY im.id ";
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) as image from detail_kontrakan as de where de.id_kontrakan = $1 and de.deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
