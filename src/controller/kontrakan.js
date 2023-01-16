@@ -98,6 +98,20 @@ const patchcategory = async (req, res) => {
   }
 };
 
+const patchDetail = async (req, res) => {
+  try {
+
+    const response = await kontrakanRepo.patchDetail(req.body, req.params.id);
+    sendResponse.success(res, 200, {
+      msg: "Edit category kontrakan Success",
+      data: response.rows[0],
+    });
+  } catch (err) {
+    console.log(err);
+    sendResponse.error(res, 500, "internal server error");
+  }
+};
+
 const deleteCategory = async (req, res) => {
   try {
     const response = await kontrakanRepo.deleteCategory(req.params.id);
@@ -124,6 +138,7 @@ const kontrakanController = {
   postDetail,
   getKontrakanDetails,
   patchcategory,
+  patchDetail,
   deleteCategory,
   deleteDetail
 };

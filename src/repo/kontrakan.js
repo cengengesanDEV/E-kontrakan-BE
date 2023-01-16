@@ -279,6 +279,31 @@ const patchCategory = (body, id) => {
   });
 };
 
+const patchDetail = (body, id) => {
+  return new Promise((resolve, reject) => {
+    let query = "update detail_kontrakan set ";
+    const values = [];
+    Object.keys(body).forEach((key, idx, array) => {
+      if (idx === array.length - 1) {
+        query += `${key} = $${idx + 1} where id = $${idx + 2} returning *`;
+        values.push(body[key], id);
+        return;
+      }
+      query += `${key} = $${idx + 1},`;
+      values.push(body[key]);
+    });
+    postgreDb
+      .query(query, values)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        console.log(err);
+        reject(err);
+      });
+  });
+};
+
 //delete
 const deleteCategory = (id) => {
   return new Promise((resolve, reject) => {
@@ -324,6 +349,7 @@ const kontrakanRepo = {
   postCategory,
   postDetail,
   patchCategory,
+  patchDetail,
   deleteCategory,
   deleteDetail
 };

@@ -55,6 +55,15 @@ const getDataById = async (req,res) => {
   }
 }
 
+const getAllUser = async (req,res) => {
+  try {
+    const response = await userRepo.getAllUsers(req.query.search)
+    sendResponse.success(res,response.status,response)
+  } catch (error) {
+    sendResponse.error(res,error.status,error)
+  }
+}
+
 const unsuspend = async (req,res) => {
   try {
     const response = await userRepo.unsuspendUser(req.params.id)
@@ -69,6 +78,7 @@ const userController = {
   profile,
   deleteProfile,
   getDataById,
+  getAllUser,
   unsuspend
 };
 

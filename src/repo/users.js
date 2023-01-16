@@ -131,6 +131,22 @@ const getUsersById = (id) => {
   });
 };
 
+const getAllUsers = (users)=> {
+  return new Promise((resolve,reject)=> {
+    let query = 'select id,role,full_name,phone_number,email,image,gender,status_acc from users'
+    if(users){
+      query += ` where lower(full_name) like lower('%${users}%')` 
+    }
+    postgreDb.query(query,(err,result)=> {
+      if(err){
+        console.log(err);
+        return reject({status:500,msg:'internal server error'})
+      }
+      return resolve({status:200,msg:'data found',data:result.rows})
+    })
+  })
+}
+
 const unsuspendUser = (id) => {
   return new Promise((resolve,reject)=> {
     const query = 'select id from msg_suspend where id_users = $1 and deleted_at is null';
@@ -165,7 +181,8 @@ const userRepo = {
   profile,
   deleteUsers,
   getUsersById,
-  unsuspendUser
+  unsuspendUser,
+  getAllUsers
 };
 
 module.exports = userRepo;
