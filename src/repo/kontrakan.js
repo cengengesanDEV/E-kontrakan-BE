@@ -4,7 +4,7 @@ const postgreDb = require("../config/postgre"); //koneksi database
 const getAllCategory = (param, hostAPI) => {
   return new Promise((resolve, reject) => {
     let query =
-      "select de.id,de.tipe_kontrakan,de.price,ca.province,ca.detail_address,(select image from image_kontrakan where id_detail_kontrakan = de.id and deleted_at is null limit 1) as image from detail_kontrakan as de inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where de.deleted_at is null and ca.deleted_at is null and de.status = 'ready' and us.status_acc = 'active'";
+      "select de.id,us.full_name,de.tipe_kontrakan,de.price,ca.province,ca.detail_address,(select image from image_kontrakan where id_detail_kontrakan = de.id and deleted_at is null limit 1) as image from detail_kontrakan as de inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where de.deleted_at is null and ca.deleted_at is null and de.status = 'ready' and us.status_acc = 'active'";
     let link = `${hostAPI}/api/kontrakan?`;
     if (param.province) {
       query += `and ca.province = '${param.province}' `;
@@ -354,6 +354,7 @@ const patchDetail = (req, id) => {
         preapreImage.push(id, image);
       });
       const addImageQuery = `insert into image_kontrakan(id_detail_kontrakan, image) ${imageValues} returning *`;
+      console.log(addImageQuery)
       postgreDb.query(addImageQuery, preapreImage, (err, result) => {
         if (err) {
           console.log(err);

@@ -5,8 +5,8 @@ const path = require("path");
 const uploader = async (req, res, next) => {
   
   const { files } = req;
-  console.log()
-  if (files.length === 0) return next();
+  console.log(files)
+  if (!files[0]) return next();
 
   req.file = [];
   let count = 0;
