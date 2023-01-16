@@ -46,7 +46,7 @@ kontrakanRouter.get('/kontrakan/category/:id', getCategoryId);
 kontrakanRouter.patch('/category/:id', isLogin(),allowedRole("owner"),uploadFile,cloudinaryCategory,patchcategory);
 kontrakanRouter.patch('/delete/category/:id',deleteCategory )
 kontrakanRouter.patch('/delete/detail/:id',deleteDetail )
-kontrakanRouter.patch('/detail/:id',isLogin(),allowedRole("owner"),uploadFile,patchDetail)
+kontrakanRouter.patch('/detail/:id',isLogin(),allowedRole("owner"),uploadMultiple,multipleCloudinary,patchDetail)
 kontrakanRouter.get('/admin/detail/:id',getDetailUsersById)
 
 module.exports = kontrakanRouter;
