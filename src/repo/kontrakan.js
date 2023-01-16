@@ -149,7 +149,7 @@ const getDetailById = (id) => {
 const getDetailByUsersId = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,de.status,ca.image as image from detail_kontrakan as de where ca.id_user = $1 and de.deleted_at is null order by id desc";
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,de.status,ca.image as image from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where ca.id_user = $1 and de.deleted_at is null order by id desc";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -332,7 +332,7 @@ const patchDetail = (req, id) => {
             }
             queryDeleteImage += `${index+1},`;
           });
-          postgreDb.query(queryDeleteImage,[split],(error,result)=> {
+          postgreDb.query(queryDeleteImage,split,(error,result)=> {
             if(error){
               console.log(error);
               return reject({ status: 500, msg: "internal server error" });
