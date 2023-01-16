@@ -135,7 +135,7 @@ const getUsersById = (id) => {
 
 const getAllUsers = (body)=> {
   return new Promise((resolve,reject)=> {
-    let query = `select id,role,full_name,phone_number,email,image,gender,status_acc from users where role = 'owner' or role = 'customer'`
+    let query = `select id,role,full_name,phone_number,email,image,gender,status_acc from users where (role = 'owner' or role = 'customer')`
     if(body.search){
       query += ` and lower(full_name) like lower('%${body.search}%')` 
     }
