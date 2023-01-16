@@ -147,7 +147,7 @@ const getKontrakanDetails = (id) => {
   return new Promise((resolve, reject) => {
     console.log(id);
     const query =
-      "select de.id,ca.kontrakan_name,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where de.id = $1 and de.deleted_at is null";
+      "select de.id,ca.kontrakan_name,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address,de.status from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where de.id = $1 and de.deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -210,10 +210,10 @@ const postDetail = (req) => {
       req.body;
     const timeStamp = Date.now() / 1000;
     const images = req.file;
-    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,$3,$4,$5,to_timestamp($6),to_timestamp($7)) returning *`;
+    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,status,created_at,updated_at) values($1,$2,$3,$4,$5,$6,to_timestamp($7),to_timestamp($8)) returning *`;
     postgreDb.query(
       query,
-      [id_kontrakan,tipe_kontrakan,fasilitas, price, deskripsi, timeStamp, timeStamp],
+      [id_kontrakan,tipe_kontrakan,fasilitas, price, deskripsi,"ready" ,timeStamp, timeStamp],
       (error, result) => {
         if (error) {
           console.log(error);
