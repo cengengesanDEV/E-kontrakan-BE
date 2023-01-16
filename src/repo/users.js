@@ -5,11 +5,12 @@ const client = require("../config/redis");
 
 const register = (body) => {
   return new Promise((resolve, reject) => {
-    let query = `insert into users(role,phone_number,email,status_acc,password,full_name,created_at,updated_at) values($1, $2,$3 ,$4,$5,$6, to_timestamp($7),to_timestamp($8)) returning role,phone_number,email,status_acc `;
-    const { role, email, passwords, phone_number, full_name } = body;
+    let query = `insert into users(role,phone_number,email,status_acc,password,full_name,created_at,updated_at) values($1, $2,$3 ,$4,$5,$6, to_timestamp($7),to_timestamp($8)) returning role,phone_number,email,status_acc,full_name `;
+    const { role, email, passwords, phone_number, name } = body;
     const validasiEmail = `select email from users where email like $1`;
     const validasiPhone = `select phone_number from users where phone_number like $1`;
     let regex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");
+    const status = 'active'
     if (regex.test(email) === false) {
       return reject({ status: 401, msg: "format email wrong" });
     }
@@ -43,9 +44,9 @@ const register = (body) => {
               role,
               phone_number,
               email,
-              "active",
+              status,
               hashedPasswords,
-              full_name,
+              name,
               timestamp,
               timestamp,
             ],
