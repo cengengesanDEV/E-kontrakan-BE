@@ -154,7 +154,7 @@ const getKontrakanDetails = (id) => {
         return reject({ status: 500, msg: "internal server error" });
       }
       let Data = { ...result.rows[0] };
-      console.log(result.rows);
+      const fasilitas_kontrakan = result.rows[0].fasilitas.split(",");
       const queryImage =
         "select image from image_kontrakan where id_detail_kontrakan = $1";
       postgreDb.query(queryImage, [id], (error, result) => {
@@ -164,7 +164,7 @@ const getKontrakanDetails = (id) => {
         }
         const image = [];
         result.rows.forEach((e) => image.push(e.image));
-        Data = { ...Data, image: image };
+        Data = { ...Data, image: image , fasilitas:fasilitas_kontrakan };
         return resolve({ status: 200, msg: "data found", data: Data });
       });
     });
@@ -210,10 +210,10 @@ const postDetail = (req) => {
       req.body;
     const timeStamp = Date.now() / 1000;
     const images = req.file;
-    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,ARRAY${fasilitas},$3,$4,to_timestamp($5),to_timestamp($6)) returning *`;
+    const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,created_at,updated_at) values($1,$2,$3,$4,$5,to_timestamp($6),to_timestamp($7)) returning *`;
     postgreDb.query(
       query,
-      [id_kontrakan, tipe_kontrakan, price, deskripsi, timeStamp, timeStamp],
+      [id_kontrakan,tipe_kontrakan,fasilitas, price, deskripsi, timeStamp, timeStamp],
       (error, result) => {
         if (error) {
           console.log(error);
@@ -221,6 +221,7 @@ const postDetail = (req) => {
           return reject({ status: 500, msg: "internal server error" });
         }
         let resultSuccess = { ...result.rows[0] };
+        const kontrakan_fasilitas = result.rows[0].fasilitas.split(',')
         const kontrakan_id = result.rows[0].id;
         let imageValues = "values";
         let preapreImage = [];
@@ -232,7 +233,6 @@ const postDetail = (req) => {
           }
           preapreImage.push(kontrakan_id, image);
         });
-        console.log("first");
         const addImageQuery = `insert into image_kontrakan(id_detail_kontrakan, image) ${imageValues} returning *`;
         postgreDb.query(addImageQuery, preapreImage, (err, result) => {
           if (err) {
@@ -241,7 +241,7 @@ const postDetail = (req) => {
           }
           const imageResult = [];
           result.rows.forEach((image) => imageResult.push(image.image));
-          resultSuccess = { ...resultSuccess, imageResult };
+          resultSuccess = { ...resultSuccess, imageResult , fasilitas:kontrakan_fasilitas};
           return resolve({
             status: 201,
             msg: "kontrakan created",
