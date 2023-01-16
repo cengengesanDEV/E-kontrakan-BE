@@ -4,7 +4,7 @@ const postgreDb = require("../config/postgre"); //koneksi database
 const getAllCategory = (param, hostAPI) => {
   return new Promise((resolve, reject) => {
     let query =
-      "select de.id,de.tipe_kontrakan,de.price,ca.province,ca.detail_address,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) as image from detail_kontrakan as de inner join category_kontrakan as ca on ca.id = de.id_kontrakan where de.deleted_at is null and ca.deleted_at is null and de.status = 'ready'";
+      "select de.id,de.tipe_kontrakan,de.price,ca.province,ca.detail_address,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) as image from detail_kontrakan as de inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where de.deleted_at is null and ca.deleted_at is null and de.status = 'ready' and us.status_acc = 'active'";
     let link = `${hostAPI}/api/kontrakan?`;
     if (param.province) {
       query += `and ca.province = '${param.province}' `;
