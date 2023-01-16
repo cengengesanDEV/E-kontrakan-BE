@@ -123,8 +123,12 @@ const getCategoryId = (id) => {
         console.log(error);
         return reject({ status: 500, msg: "internal server error" });
       }
-      const imagearray = [result.rows[0].image]
-      return resolve({ status: 200, msg: "data found", data: {...result.rows,image:imagearray} });
+      const imagearray = [result.rows[0].image];
+      return resolve({
+        status: 200,
+        msg: "data found",
+        data: { ...result.rows, image: imagearray },
+      });
     });
   });
 };
@@ -133,6 +137,19 @@ const getDetailById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
       "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,de.status,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) as image from detail_kontrakan as de where de.id_kontrakan = $1 and de.deleted_at is null order by id desc";
+    postgreDb.query(query, [id], (error, result) => {
+      if (error) {
+        console.log(error);
+        return reject({ status: 500, msg: "internal server error" });
+      }
+      return resolve({ status: 200, msg: "data found", data: result.rows });
+    });
+  });
+};
+const getDetailByUsersId = (id) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,de.status,ca.image as image from detail_kontrakan as de where ca.id_user = $1 and de.deleted_at is null order by id desc";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -164,7 +181,13 @@ const getKontrakanDetails = (id) => {
         }
         const image = [];
         result.rows.forEach((e) => image.push(e.image));
-        Data = { ...Data, image: image , fasilitas:fasilitas_kontrakan };
+        const imageArray = image.join(",").split(",");
+        Data = {
+          ...Data,
+          image: image,
+          imageArray,
+          fasilitas: fasilitas_kontrakan,
+        };
         return resolve({ status: 200, msg: "data found", data: Data });
       });
     });
@@ -213,7 +236,16 @@ const postDetail = (req) => {
     const query = `insert into detail_kontrakan(id_kontrakan,tipe_kontrakan,fasilitas,price,deskripsi,status,created_at,updated_at) values($1,$2,$3,$4,$5,$6,to_timestamp($7),to_timestamp($8)) returning *`;
     postgreDb.query(
       query,
-      [id_kontrakan,tipe_kontrakan,fasilitas, price, deskripsi,"ready" ,timeStamp, timeStamp],
+      [
+        id_kontrakan,
+        tipe_kontrakan,
+        fasilitas,
+        price,
+        deskripsi,
+        "ready",
+        timeStamp,
+        timeStamp,
+      ],
       (error, result) => {
         if (error) {
           console.log(error);
@@ -221,7 +253,7 @@ const postDetail = (req) => {
           return reject({ status: 500, msg: "internal server error" });
         }
         let resultSuccess = { ...result.rows[0] };
-        const kontrakan_fasilitas = result.rows[0].fasilitas.split(',')
+        const kontrakan_fasilitas = result.rows[0].fasilitas.split(",");
         const kontrakan_id = result.rows[0].id;
         let imageValues = "values";
         let preapreImage = [];
@@ -241,7 +273,11 @@ const postDetail = (req) => {
           }
           const imageResult = [];
           result.rows.forEach((image) => imageResult.push(image.image));
-          resultSuccess = { ...resultSuccess, imageResult , fasilitas:kontrakan_fasilitas};
+          resultSuccess = {
+            ...resultSuccess,
+            imageResult,
+            fasilitas: kontrakan_fasilitas,
+          };
           return resolve({
             status: 201,
             msg: "kontrakan created",
@@ -279,9 +315,30 @@ const patchCategory = (body, id) => {
   });
 };
 
-const patchDetail = (body, id) => {
+const patchDetail = (req, id) => {
   return new Promise((resolve, reject) => {
     let query = "update detail_kontrakan set ";
+    let {body} = req
+    if(body.imageDelete){
+      const imageDelete = body.imageDelete
+      delete body.imageDelete
+      const split = imageDelete.split(",");
+          let queryDeleteImage =
+            "update image_kontrakan set deleted_at = to_timestamp($1) where image in (";
+          split.forEach((_, index , arr) => {
+            if(index === arr.length -1 ){
+              queryDeleteImage += `${index +1})`
+              return
+            }
+            queryDeleteImage += `${index+1},`;
+          });
+          postgreDb.query(queryDeleteImage,[split],(error,result)=> {
+            if(error){
+              console.log(error);
+              return reject({ status: 500, msg: "internal server error" });
+            }
+          })
+    }
     const values = [];
     Object.keys(body).forEach((key, idx, array) => {
       if (idx === array.length - 1) {
@@ -299,7 +356,7 @@ const patchDetail = (body, id) => {
       })
       .catch((err) => {
         console.log(err);
-        console.log(query)
+        console.log(query);
         reject(err);
       });
   });
@@ -308,7 +365,8 @@ const patchDetail = (body, id) => {
 //delete
 const deleteCategory = (id) => {
   return new Promise((resolve, reject) => {
-    const query = "update category_kontrakan set deleted_at = to_timestamp($1) where id = $2";
+    const query =
+      "update category_kontrakan set deleted_at = to_timestamp($1) where id = $2";
     const timeStamp = Date.now() / 1000;
     postgreDb.query(query, [timeStamp, id], (err, response) => {
       if (err) {
@@ -318,14 +376,15 @@ const deleteCategory = (id) => {
       return resolve({
         status: 200,
         msg: "category kontrakan deleted",
-        response
+        response,
       });
     });
   });
 };
 const deleteDetail = (id) => {
   return new Promise((resolve, reject) => {
-    const query = "update detail_kontrakan set deleted_at = to_timestamp($1) where id = $2";
+    const query =
+      "update detail_kontrakan set deleted_at = to_timestamp($1) where id = $2";
     const timeStamp = Date.now() / 1000;
     postgreDb.query(query, [timeStamp, id], (err, response) => {
       if (err) {
@@ -335,7 +394,7 @@ const deleteDetail = (id) => {
       return resolve({
         status: 200,
         msg: "tipe kontrakan deleted",
-        response
+        response,
       });
     });
   });
@@ -347,12 +406,13 @@ const kontrakanRepo = {
   getDetailById,
   getCategoryId,
   getKontrakanDetails,
+  getDetailByUsersId,
   postCategory,
   postDetail,
   patchCategory,
   patchDetail,
   deleteCategory,
-  deleteDetail
+  deleteDetail,
 };
 
 module.exports = kontrakanRepo;

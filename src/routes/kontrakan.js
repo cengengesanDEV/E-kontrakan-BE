@@ -28,6 +28,7 @@ const {
   postCategory,
   postDetail,
   getKontrakanDetails,
+  getDetailUsersById,
   getCategoryId,
   patchcategory,
   patchDetail,
@@ -46,5 +47,6 @@ kontrakanRouter.patch('/category/:id', isLogin(),allowedRole("owner"),uploadFile
 kontrakanRouter.patch('/delete/category/:id',deleteCategory )
 kontrakanRouter.patch('/delete/detail/:id',deleteDetail )
 kontrakanRouter.patch('/detail/:id',isLogin(),allowedRole("owner"),uploadFile,patchDetail)
+kontrakanRouter.get('/admin/detail/:di',getDetailUsersById)
 
 module.exports = kontrakanRouter;

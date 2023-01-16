@@ -41,6 +41,16 @@ const getDetailById = async (req, res) => {
   }
 };
 
+const getDetailUsersById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await kontrakanRepo.getDetailByUsersId(id);
+    sendResponse.success(res, response.status, response);
+  } catch (error) {
+    sendResponse.error(res, error.status, error);
+  }
+};
+
 const getKontrakanDetails = async (req,res) => {
   try {
     const { id } = req.params;
@@ -101,7 +111,7 @@ const patchcategory = async (req, res) => {
 const patchDetail = async (req, res) => {
   try {
 
-    const response = await kontrakanRepo.patchDetail(req.body, req.params.id);
+    const response = await kontrakanRepo.patchDetail(req, req.params.id);
     sendResponse.success(res, 200, {
       msg: "Edit category kontrakan Success",
       data: response.rows[0],
@@ -134,6 +144,7 @@ const kontrakanController = {
   getCategoryById,
   getDetailById,
   getCategoryId,
+  getDetailUsersById,
   postCategory,
   postDetail,
   getKontrakanDetails,
