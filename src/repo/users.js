@@ -133,15 +133,20 @@ const getUsersById = (id) => {
   });
 };
 
-const getAllUsers = (users)=> {
+const getAllUsers = (body)=> {
   return new Promise((resolve,reject)=> {
     let query = 'select id,role,full_name,phone_number,email,image,gender,status_acc from users'
-    if(users){
-      query += ` where lower(full_name) like lower('%${users}%')` 
+    if(body.search){
+      query += ` where lower(full_name) like lower('%${body.search}%')` 
+      if(body.sort){
+        query+= ` and status_acc = '${body.sort}'`
+      }
+    }
+    if(body.sort && !body.search){
+      query+= ` where status_acc = '${body.sort}'`
     }
     postgreDb.query(query,(err,result)=> {
       if(err){
-        console.log(err);
         return reject({status:500,msg:'internal server error'})
       }
       return resolve({status:200,msg:'data found',data:result.rows})

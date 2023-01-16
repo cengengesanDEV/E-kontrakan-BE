@@ -57,7 +57,7 @@ const getDataById = async (req,res) => {
 
 const getAllUser = async (req,res) => {
   try {
-    const response = await userRepo.getAllUsers(req.query.search)
+    const response = await userRepo.getAllUsers(req.query)
     sendResponse.success(res,response.status,response)
   } catch (error) {
     sendResponse.error(res,error.status,error)
