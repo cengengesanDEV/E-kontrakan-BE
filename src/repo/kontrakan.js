@@ -149,7 +149,7 @@ const getDetailById = (id) => {
 const getDetailByUsersId = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,de.status,ca.image,ca.province as image from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where ca.id_user = $1 and de.deleted_at is null order by id desc";
+      "select de.id,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,de.status,ca.image,ca.province from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where ca.id_user = $1 and de.deleted_at is null order by id desc";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -322,23 +322,27 @@ const patchDetail = (req, id) => {
     if(body.imageDelete){
       const imageDelete = body.imageDelete
       delete body.imageDelete
-      const split = imageDelete.split(",");
+      const timeStamp = Date.now() / 1000;
+      let split = imageDelete.split(",");
+      split = [timeStamp,...split]
           let queryDeleteImage =
             "update image_kontrakan set deleted_at = to_timestamp($1) where image in (";
           split.forEach((_, index , arr) => {
             if(index === arr.length -1 ){
-              queryDeleteImage += `${index +1})`
+              queryDeleteImage += `$${index +1})`
               return
             }
-            queryDeleteImage += `${index+1},`;
+            queryDeleteImage += `$${index+1},`;
           });
           postgreDb.query(queryDeleteImage,split,(error,result)=> {
             if(error){
               console.log(error);
+              console.log(queryDeleteImage);
               return reject({ status: 500, msg: "internal server error" });
             }
           })
     }
+    console.log("first")
     const values = [];
     Object.keys(body).forEach((key, idx, array) => {
       if (idx === array.length - 1) {
