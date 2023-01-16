@@ -299,6 +299,7 @@ const patchDetail = (body, id) => {
       })
       .catch((err) => {
         console.log(err);
+        console.log(query)
         reject(err);
       });
   });
