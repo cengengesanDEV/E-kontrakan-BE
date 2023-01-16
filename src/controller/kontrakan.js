@@ -21,16 +21,16 @@ const getCategoryById = async (req, res) => {
   }
 };
 
-const getCategoryId = async(req,res)=> {
+const getCategoryId = async (req, res) => {
   try {
     const { id } = req.params;
     const response = await kontrakanRepo.getCategoryId(id);
     sendResponse.success(res, response.status, response);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     sendResponse.error(res, error.status, error);
   }
-}
+};
 const getDetailById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -51,16 +51,16 @@ const getDetailUsersById = async (req, res) => {
   }
 };
 
-const getKontrakanDetails = async (req,res) => {
+const getKontrakanDetails = async (req, res) => {
   try {
     const { id } = req.params;
     const response = await kontrakanRepo.getKontrakanDetails(id);
     sendResponse.success(res, response.status, response);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     sendResponse.error(res, error.status, error);
   }
-}
+};
 
 const postCategory = async (req, res) => {
   try {
@@ -110,7 +110,7 @@ const patchcategory = async (req, res) => {
 
 const patchDetail = async (req, res) => {
   try {
-
+    console.log(req);
     const response = await kontrakanRepo.patchDetail(req, req.params.id);
     sendResponse.success(res, 200, {
       msg: "Edit category kontrakan Success",
@@ -131,13 +131,14 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-const deleteDetail = async (req,res)=> {
+const deleteDetail = async (req, res) => {
   try {
     const response = await kontrakanRepo.deleteDetail(req.params.id);
     sendResponse.success(res, response.status, response);
   } catch (error) {
-    sendResponse.error(res, error.status, error);}
-}
+    sendResponse.error(res, error.status, error);
+  }
+};
 
 const kontrakanController = {
   getAllCategory,
@@ -151,7 +152,7 @@ const kontrakanController = {
   patchcategory,
   patchDetail,
   deleteCategory,
-  deleteDetail
+  deleteDetail,
 };
 
 module.exports = kontrakanController;

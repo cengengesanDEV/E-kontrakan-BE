@@ -181,11 +181,9 @@ const getKontrakanDetails = (id) => {
         }
         const image = [];
         result.rows.forEach((e) => image.push(e.image));
-        const imageArray = image.join(",").split(",");
         Data = {
           ...Data,
           image: image,
-          imageArray,
           fasilitas: fasilitas_kontrakan,
         };
         return resolve({ status: 200, msg: "data found", data: Data });

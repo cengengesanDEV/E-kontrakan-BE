@@ -3,8 +3,10 @@ const dataUriParser = require("datauri/parser");
 const path = require("path");
 
 const uploader = async (req, res, next) => {
+  
   const { files } = req;
-  if (!files) return next();
+  console.log()
+  if (files.length === 0) return next();
 
   req.file = [];
   let count = 0;
