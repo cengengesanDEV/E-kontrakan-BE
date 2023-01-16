@@ -164,7 +164,7 @@ const getKontrakanDetails = (id) => {
   return new Promise((resolve, reject) => {
     console.log(id);
     const query =
-      "select de.id,ca.kontrakan_name,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address,de.status from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id where de.id = $1 and de.deleted_at is null";
+      "select de.id,us.full_name,ca.kontrakan_name,de.tipe_kontrakan,de.fasilitas,de.price,de.deskripsi,ca.province,ca.detail_address,de.status from detail_kontrakan as de inner join category_kontrakan as ca on de.id_kontrakan = ca.id inner join users as us on ca.id_user = us.id where de.id = $1 and de.deleted_at is null";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
@@ -332,7 +332,7 @@ const patchDetail = (req, id) => {
         queryDeleteImage += `$${index + 2},`;
       });
       split = [timeStamp, ...split];
-      console.log(split);
+      console.log(split,queryDeleteImage);
       postgreDb.query(queryDeleteImage, split, (error, result) => {
         if (error) {
           console.log(error);
