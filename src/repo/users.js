@@ -5,7 +5,7 @@ const client = require("../config/redis");
 
 const register = (body) => {
   return new Promise((resolve, reject) => {
-    let query = `insert into users(role,phone_number,email,password,created_at,updated_at) values($1, $2, $3,$4, to_timestamp($5),to_timestamp($6)) returning * `;
+    let query = `insert into users(role,phone_number,email,status_acc,password,created_at,updated_at) values($1, $2,$3 ,$4,$5, to_timestamp($6),to_timestamp($7)) returning role,phone_number,email,status_acc `;
     const { role, email, passwords, phone_number } = body;
     const validasiEmail = `select email from users where email like $1`;
     const validasiPhone = `select phone_number from users where phone_number like $1`;
@@ -39,7 +39,15 @@ const register = (body) => {
           const timestamp = Date.now() / 1000;
           postgreDb.query(
             query,
-            [role, phone_number, email, hashedPasswords, timestamp, timestamp],
+            [
+              role,
+              phone_number,
+              email,
+              "active",
+              hashedPasswords,
+              timestamp,
+              timestamp,
+            ],
             (error, response) => {
               if (error) {
                 console.log(error);
@@ -88,19 +96,22 @@ const profile = (body, token) => {
   });
 };
 
-const deleteUsers = (token, id) => {
+const deleteUsers = (id, msg) => {
   return new Promise((resolve, reject) => {
-    const query = "update users set deleted_at = $1 where id = $2";
-    const timestamp = Date.now() / 1000;
-    postgreDb.query(query, [timestamp, id], (error, result) => {
+    const query = "update users set status_acc = $1 where id = $2";
+    postgreDb.query(query, ["suspend", id], (error, result) => {
       if (error) {
         console.log(error);
         return reject({ status: 500, msg: "internal server error" });
       }
-      const jwtr = new JWTR(client);
-      jwtr.destroy(token.jti).then((res) => {
-        if (!res) reject({ status: 500, msg: "internal server error" });
-        return resolve({ status: 200, msg: "logout success" });
+      const queryMsg =
+        "insert into msg_suspend(id_users,msg) values($1,$2) returning msg";
+      postgreDb.query(queryMsg, [id, msg], (err, result) => {
+        if (err) {
+          console.log(err);
+          return reject({ status: 500, msg: "internal server error" });
+        }
+        return resolve({ status: 201, msg: result.rows[0].msg });
       });
     });
   });
@@ -120,11 +131,41 @@ const getUsersById = (id) => {
   });
 };
 
+const unsuspendUser = (id) => {
+  return new Promise((resolve,reject)=> {
+    const query = 'select id from msg_suspend where id_users = $1 and deleted_at is null';
+    postgreDb.query(query, [id],(error,result)=> {
+      if(error){
+        console.log(error);
+        return reject({ status: 500, msg: "internal server error" });
+      }
+      const idMsg = result.rows[0].id
+      const timestamp = Date.now() / 1000;
+      const queryDeleteMsg = 'update msg_suspend set deleted_at = to_timestamp($1) where id = $2'
+      postgreDb.query(queryDeleteMsg,[timestamp,idMsg],(error,result)=> {
+        if(error){
+          console.log(error);
+          return reject({ status: 500, msg: "internal server error" });
+        }
+        const queryDeleteSuspend = 'update users set status_acc = $1 where id = $2'
+        postgreDb.query(queryDeleteSuspend,["active",id],(error,result)=> {
+          if(error){
+            console.log(error)
+            return reject({ status: 500, msg: "internal server error" });
+          }
+          return resolve({ status: 200, msg: "users successfuly unsuspend" })
+        })
+      })
+    })
+  })
+}
+
 const userRepo = {
   register,
   profile,
   deleteUsers,
-  getUsersById
+  getUsersById,
+  unsuspendUser
 };
 
 module.exports = userRepo;

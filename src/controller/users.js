@@ -38,7 +38,7 @@ const profile = async (req, res) => {
 
 const deleteProfile = async (req, res) => {
   try {
-      const response = await userRepo.deleteUsers(req.userPayload.id,req.params.id)
+      const response = await userRepo.deleteUsers(req.params.id,req.body.msg)
       sendResponse.success(res, response.status, response)
 
   } catch (error) {
@@ -55,11 +55,21 @@ const getDataById = async (req,res) => {
   }
 }
 
+const unsuspend = async (req,res) => {
+  try {
+    const response = await userRepo.unsuspendUser(req.params.id)
+    sendResponse.success(res,response.status,response)
+  } catch (error) {
+    sendResponse.error(res,error.status,error)
+  }
+}
+
 const userController = {
   register,
   profile,
   deleteProfile,
-  getDataById
+  getDataById,
+  unsuspend
 };
 
 module.exports = userController;

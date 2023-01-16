@@ -20,11 +20,12 @@ function uploadFile(req, res, next) {
   });
 }
 
-const { register,profile,deleteProfile , getDataById} = require("../controller/users.js");
+const { register , profile , deleteProfile , getDataById , unsuspend} = require("../controller/users.js");
 
 usersRouter.post("/",validate.body("email", "passwords", "phone_number", "role"),register);
 usersRouter.patch("/profile",isLogin(),validate.body("full_name","image","location","address","gender"),uploadFile,cloudinaryUploader,profile);
-usersRouter.patch("/delete/:id",isLogin(),deleteProfile);
+usersRouter.patch("/delete/:id",isLogin(),allowedRole('admin'),deleteProfile);
 usersRouter.get("/",isLogin(),getDataById)
+usersRouter.patch('/unsuspend/:id',isLogin(),allowedRole('admin'),unsuspend)
 
 module.exports = usersRouter;

@@ -11,7 +11,7 @@ const login = (body) => {
     const jwtr = new JWTR(client);
     // 1. Cek apakah ada email yang sama di database ?
     const getPasswordsByEmailValues =
-      "select id, email, password, role from users where email = $1";
+      "select id, email, password,status_acc, role from users where email = $1";
     const getPasswordsEmailValues = [email];
     postgreDb.query(
       getPasswordsByEmailValues,
@@ -23,6 +23,16 @@ const login = (body) => {
         }
         if (response.rows.length === 0)
           return reject({ status: 401, msg: "email/password wrong" });
+        if (response.rows[0].status_acc === 'suspend'){
+          const querySuspend = 'select msg from msg_suspend where id_users = $1 and deleted_at is null'
+          postgreDb.query(querySuspend,[response.rows[0].id],(err,res)=> {
+            if(err){
+              console.log(err)
+              return reject({ status: 500, msg: "internal server error" })
+            }
+            return reject({status:401,msg:res.rows[0].msg})
+          })
+        }
         // 3. Process Login => create jwt => return jwt to users
         const payload = {
           user_id: response.rows[0].id,
