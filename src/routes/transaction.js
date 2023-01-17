@@ -5,7 +5,8 @@ const isLogin = require("../middleware/isLogin.js");
 const allowedRole = require("../middleware/allowedRole.js");
 
 const {
-    postbooking
+    postbooking,
+    
   } = require("../controller/transaction");
 
 transactionRouter.post('/',isLogin(),allowedRole('customer'),postbooking)
