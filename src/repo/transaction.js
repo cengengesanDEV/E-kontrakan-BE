@@ -22,7 +22,7 @@ const postBooking = (body) => {
     })
 }
 
-const payment = (body) => {
+const payment = (body,image) => {
     return new Promise((resolve,reject)=> {
         const {payment_method,id_user,id_transaction} = body
         const query = 'update transaction set payment_method = $1, status_booking = $2 where id = $3 returnig *'
@@ -39,7 +39,7 @@ const payment = (body) => {
                     console.log(error)
                     return reject({status:500, msg: 'internal server error'})
                 }
-                return resolve({status:201, msg:'payment has been done'})
+            
             })
         })
     })
@@ -47,6 +47,7 @@ const payment = (body) => {
 
 const transactionRepo = {
     postBooking,
+    payment,
     payment
   };
   

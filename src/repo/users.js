@@ -79,7 +79,7 @@ const profile = (body, token) => {
       if (idx === array.length - 1) {
         query += `${key} = $${idx + 1} where id = $${
           idx + 2
-        } returning full_name,location,role,email,address,id,phone_number,image,gender`;
+        } returning full_name,location,role,email,address,id,phone_number,image,gender,no_rekening`;
         values.push(body[key], token);
         return;
       }

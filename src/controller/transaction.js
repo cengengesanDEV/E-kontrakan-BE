@@ -11,8 +11,19 @@ const postbooking = async (req, res) => {
     }
   };
 
+const payment = async (req, res) => {
+    try {
+      console.log(req.body)
+      const response = await transactionRepo.payment(req.body,req.file.secure_url);
+      sendResponse.success(res, response.status, response);
+    } catch (error) {
+      sendResponse.error(res, error.status, error);
+    }
+  };
+
 const kontrakanController = {
-    postbooking
+    postbooking,
+    payment
   };
   
   module.exports = kontrakanController;
