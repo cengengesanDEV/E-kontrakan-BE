@@ -122,7 +122,7 @@ const deleteUsers = (id, msg) => {
 const getUsersById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select id,role,full_name,phone_number,email,image,gender,location,address from users where id = $1";
+      "select id,role,full_name,phone_number,email,image,gender,location,address,no_rekening from users where id = $1";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
