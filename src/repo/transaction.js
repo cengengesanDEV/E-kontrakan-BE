@@ -45,7 +45,7 @@ const payment = (body, image) => {
     const { payment_method, id_transaction } = body;
     const query =
       "update transaction set payment_method = $1, status_booking = $2 where id = $3 returning *";
-    const status = "bank";
+    const status = "booked";
     postgreDb.query(
       query,
       [payment_method, "paid", id_transaction],
