@@ -43,7 +43,7 @@ transactionRouter.get('/paid',isLogin(),allowedRole('owner'),getStatuspaid)
 transactionRouter.patch('/acc/:id',isLogin(),allowedRole('owner'),acceptOrder)
 transactionRouter.patch('/cancel/:id',isLogin(),allowedRole('owner'),cancelOrder)
 transactionRouter.patch('/finish/:id',isLogin(),allowedRole('owner'),finishOrder)
-transactionRouter.patch('/delete/cutomer/:id',isLogin(),allowedRole('customer'),deleteCustomer)
+transactionRouter.patch('/delete/customer/:id',isLogin(),allowedRole('customer'),deleteCustomer)
 transactionRouter.patch('/delete/owner/:id',isLogin(),allowedRole('owner'),deleteOwner)
 
 module.exports = transactionRouter;
