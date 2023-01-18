@@ -38,7 +38,7 @@ const getByStatus = async (req, res) => {
 const getHistory = async (req, res) => {
   try {
     const response = await transactionRepo.getHistoryCustomer(
-      req.body.status,
+      req.params.status,
       req.userPayload.user_id
     );
     sendResponse.success(res, response.status, response);
