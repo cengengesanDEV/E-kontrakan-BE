@@ -142,7 +142,7 @@ const acceptOrder = (id, status) => {
   return new Promise((resolve, reject) => {
     if (status === "accept") {
       const query =
-        "update transaction set status_boking = 'process' where id = $1 returning id_kontrakan ";
+        "update transaction set status_booking = 'process' where id = $1 returning id_kontrakan ";
       postgreDb.query(query, [id], (err, result) => {
         if (err) {
           console.log(err);
@@ -161,7 +161,7 @@ const acceptOrder = (id, status) => {
     }
     if (status === "decline") {
       const query =
-        "update transaction set status_boking = 'cancel' where id = $1 returning id_kontrakan ";
+        "update transaction set status_booking = 'cancel' where id = $1 returning id_kontrakan ";
       postgreDb.query(query, [id], (err, result) => {
         if (err) {
           console.log(err);
