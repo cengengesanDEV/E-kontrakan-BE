@@ -50,7 +50,7 @@ const getStatuspaid = async (req, res) => {
   try {
     const response = await transactionRepo.getStatusPaid(
       req.userPayload.user_id,
-      req.body.status
+      req.params.status
     );
     sendResponse.success(res, response.status, response);
   } catch (error) {
