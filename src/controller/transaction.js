@@ -46,20 +46,11 @@ const getHistory = async (req, res) => {
     sendResponse.error(res, error.status, error);
   }
 };
-const getStatusProcess = async (req, res) => {
-  try {
-    const response = await transactionRepo.getStatusProcess(
-      req.userPayload.user_id
-    );
-    sendResponse.success(res, response.status, response);
-  } catch (error) {
-    sendResponse.error(res, error.status, error);
-  }
-};
 const getStatuspaid = async (req, res) => {
   try {
     const response = await transactionRepo.getStatusPaid(
-      req.userPayload.user_id
+      req.userPayload.user_id,
+      req.body.status
     );
     sendResponse.success(res, response.status, response);
   } catch (error) {
@@ -107,7 +98,6 @@ const kontrakanController = {
   postbooking,
   payment,
   getByStatus,
-  getStatusProcess,
   getStatuspaid,
   getHistory,
   acceptOrder,
