@@ -126,7 +126,7 @@ const getStatusPaid = (id , status) => {
     });
     }
     if(status === 'process'){
-      const query = `select tr.id,de.tipe_kontrakan,(select full_name from users where tr.id_users = id) as customers,us.full_name as owner,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method,(select image from image_kontrakan where id_detail_kontrakan = de.id and deleted_at is null limit 1) as image from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where us.id = $1 and tr.status_booking = 'process' and  now() >= tr.checkout`;
+      const query = `select tr.id,de.tipe_kontrakan,(select full_name from users where tr.id_users = id) as customers,us.full_name as owner,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method,(select image from image_kontrakan where id_detail_kontrakan = de.id and deleted_at is null limit 1) as image from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where us.id = $1 and tr.status_booking = 'process' and  now() <= tr.checkout`;
     postgreDb.query(query, [id], (err, result) => {
       if (err) {
         console.log(err);
