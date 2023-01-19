@@ -85,19 +85,19 @@ const payment = (body, image) => {
   });
 };
 
-const getHistoryCustomer = (status,id) => {
-    return new Promise((resolve, reject) => {
-        const query =
-          "select tr.id,de.tipe_kontrakan,(select image from image_kontrakan where de.id = id_detail_kontrakan and deleted_at is null limit 1) as image_kontrakan,(select full_name from users as us inner join category_kontrakan as ca on ca.id_user = us.id inner join detail_kontrakan as de on de.id_kontrakan = ca.id inner join transaction as tr on tr.id_kontrakan = de.id limit 1) as owner,(select no_rekening from users as us inner join category_kontrakan as ca on ca.id_user = us.id inner join detail_kontrakan as de on de.id_kontrakan = ca.id inner join transaction as tr on tr.id_kontrakan = de.id limit 1) as no_rekening,us.full_name as customer,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join users as us on us.id = tr.id_users where us.id = $1 and tr.status_booking = $2 and tr.deleted_at is null";
-        postgreDb.query(query, [id, status], (err, result) => {
-          if (err) {
-            console.log(err);
-            return reject({ status: 500, msg: "internal server error" });
-          }
-          return resolve({ status: 200, msg: "history found", data: result.rows });
-        });
-      });
-}
+const getHistoryCustomer = (status, id) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      "select tr.id,de.tipe_kontrakan,(select image from image_kontrakan where de.id = id_detail_kontrakan and deleted_at is null limit 1) as image_kontrakan,(select full_name from users as us inner join category_kontrakan as ca on ca.id_user = us.id inner join detail_kontrakan as de on de.id_kontrakan = ca.id inner join transaction as tr on tr.id_kontrakan = de.id limit 1) as owner,(select no_rekening from users as us inner join category_kontrakan as ca on ca.id_user = us.id inner join detail_kontrakan as de on de.id_kontrakan = ca.id inner join transaction as tr on tr.id_kontrakan = de.id limit 1) as no_rekening,us.full_name as customer,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join users as us on us.id = tr.id_users where us.id = $1 and tr.status_booking = $2 and tr.deleted_at is null";
+    postgreDb.query(query, [id, status], (err, result) => {
+      if (err) {
+        console.log(err);
+        return reject({ status: 500, msg: "internal server error" });
+      }
+      return resolve({ status: 200, msg: "history found", data: result.rows });
+    });
+  });
+};
 
 const getTransactionsByStatus_booking = (status, id) => {
   return new Promise((resolve, reject) => {
@@ -138,47 +138,46 @@ const getStatusPaid = (id) => {
   });
 };
 
-const acceptOrder = (id) => {
+const acceptOrder = (id, status) => {
   return new Promise((resolve, reject) => {
-    const query =
-      "update transaction set status_boking = 'process' where id = $1 returning id_kontrakan ";
-    postgreDb.query(query, [id], (err, result) => {
-      if (err) {
-        console.log(err);
-        return reject({ status: 500, msg: "internal server error" });
-      }
-      const id_kontrakan = result.rows[0].id_kontrakan;
-      const queryUpdate = `update detail_kontrakan set status = 'rented' where id = $1`;
-      postgreDb.query(queryUpdate, [id_kontrakan], (err, result) => {
+    if (status === "accept") {
+      const query =
+        "update transaction set status_boking = 'process' where id = $1 returning id_kontrakan ";
+      postgreDb.query(query, [id], (err, result) => {
         if (err) {
           console.log(err);
           return reject({ status: 500, msg: "internal server error" });
         }
-        return resolve({ status: 200, msg: "order accepted" });
+        const id_kontrakan = result.rows[0].id_kontrakan;
+        const queryUpdate = `update detail_kontrakan set status = 'rented' where id = $1`;
+        postgreDb.query(queryUpdate, [id_kontrakan], (err, result) => {
+          if (err) {
+            console.log(err);
+            return reject({ status: 500, msg: "internal server error" });
+          }
+          return resolve({ status: 200, msg: "order accepted" });
+        });
       });
-    });
-  });
-};
-
-const cancelOrder = (id) => {
-  return new Promise((resolve, reject) => {
-    const query =
-      "update transaction set status_boking = 'cancel' where id = $1 returning id_kontrakan ";
-    postgreDb.query(query, [id], (err, result) => {
-      if (err) {
-        console.log(err);
-        return reject({ status: 500, msg: "internal server error" });
-      }
-      const id_kontrakan = result.rows[0].id_kontrakan;
-      const queryUpdate = `update detail_kontrakan set status = 'ready' where id = $1`;
-      postgreDb.query(queryUpdate, [id_kontrakan], (err, result) => {
+    }
+    if (status === "decline") {
+      const query =
+        "update transaction set status_boking = 'cancel' where id = $1 returning id_kontrakan ";
+      postgreDb.query(query, [id], (err, result) => {
         if (err) {
           console.log(err);
           return reject({ status: 500, msg: "internal server error" });
         }
-        return resolve({ status: 200, msg: "order canceled" });
+        const id_kontrakan = result.rows[0].id_kontrakan;
+        const queryUpdate = `update detail_kontrakan set status = 'ready' where id = $1`;
+        postgreDb.query(queryUpdate, [id_kontrakan], (err, result) => {
+          if (err) {
+            console.log(err);
+            return reject({ status: 500, msg: "internal server error" });
+          }
+          return resolve({ status: 200, msg: "order canceled" });
+        });
       });
-    });
+    }
   });
 };
 
@@ -208,12 +207,16 @@ const deleteTransactionCustomer = (id) => {
   return new Promise((resolve, reject) => {
     const timestamp = Date.now() / 1000;
     const query = `update transaction set deleted_at = to_timestamp($1) where id = $2 `;
-    postgreDb.query(query, [timestamp,id], (err, result) => {
+    postgreDb.query(query, [timestamp, id], (err, result) => {
       if (err) {
         console.log(err);
         return reject({ status: 500, msg: "internal server error" });
       }
-      return resolve({ status: 200, msg: "delete history success", data: result.rows });
+      return resolve({
+        status: 200,
+        msg: "delete history success",
+        data: result.rows,
+      });
     });
   });
 };
@@ -221,12 +224,16 @@ const deleteTransactionOwner = (id) => {
   return new Promise((resolve, reject) => {
     const timestamp = Date.now() / 1000;
     const query = `update transaction set deleted_at_owner = to_timestamp($1) where id = $2 `;
-    postgreDb.query(query, [timestamp,id], (err, result) => {
+    postgreDb.query(query, [timestamp, id], (err, result) => {
       if (err) {
         console.log(err);
         return reject({ status: 500, msg: "internal server error" });
       }
-      return resolve({ status: 200, msg: "delete history success", data: result.rows });
+      return resolve({
+        status: 200,
+        msg: "delete history success",
+        data: result.rows,
+      });
     });
   });
 };
@@ -240,10 +247,9 @@ const transactionRepo = {
   getStatusPaid,
   getHistoryCustomer,
   acceptOrder,
-  cancelOrder,
   finishOrder,
   deleteTransactionCustomer,
-  deleteTransactionOwner
+  deleteTransactionOwner,
 };
 
 module.exports = transactionRepo;

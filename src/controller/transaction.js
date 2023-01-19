@@ -68,15 +68,7 @@ const getStatuspaid = async (req, res) => {
 };
 const acceptOrder = async (req, res) => {
   try {
-    const response = await transactionRepo.acceptOrder(req.params.id);
-    sendResponse.success(res, response.status, response);
-  } catch (error) {
-    sendResponse.error(res, error.status, error);
-  }
-};
-const cancelOrder = async (req, res) => {
-  try {
-    const response = await transactionRepo.cancelOrder(req.params.id);
+    const response = await transactionRepo.acceptOrder(req.params.id,req.body.status);
     sendResponse.success(res, response.status, response);
   } catch (error) {
     sendResponse.error(res, error.status, error);
@@ -119,7 +111,6 @@ const kontrakanController = {
   getStatuspaid,
   getHistory,
   acceptOrder,
-  cancelOrder,
   finishOrder,
   deleteCustomer,
   deleteOwner,
