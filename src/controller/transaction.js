@@ -27,7 +27,6 @@ const payment = async (req, res) => {
 const getByStatus = async (req, res) => {
   try {
     const response = await transactionRepo.getTransactionsByStatus_booking(
-      req.body.status,
       req.userPayload.user_id
     );
     sendResponse.success(res, response.status, response);
