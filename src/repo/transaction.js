@@ -184,7 +184,7 @@ const acceptOrder = (id, status) => {
 const finishOrder = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "update transaction set status_bopking = 'done' where id = $1 returning id_kontrakan ";
+      "update transaction set status_booking = 'done' where id = $1 returning id_kontrakan ";
     postgreDb.query(query, [id], (err, result) => {
       if (err) {
         console.log(err);
