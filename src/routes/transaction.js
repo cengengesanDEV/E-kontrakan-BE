@@ -34,7 +34,7 @@ const {
 
 transactionRouter.post('/',isLogin(),allowedRole('customer'),postbooking)
 transactionRouter.patch('/payment',isLogin(),allowedRole('customer'),uploadFile,cloudinaryTransfer,payment)
-transactionRouter.get('/',isLogin(),allowedRole('owner'),getByStatus)
+transactionRouter.get('/:status',isLogin(),allowedRole('owner'),getByStatus)
 transactionRouter.get('/history',isLogin(),allowedRole('customer'),getHistory)
 transactionRouter.get('/paid/:status',isLogin(),allowedRole('owner'),getStatuspaid)
 transactionRouter.patch('/acc/:id',isLogin(),allowedRole('owner'),acceptOrder)
