@@ -20,7 +20,7 @@ function uploadFile(req, res, next) {
   });
 }
 
-const { register , profile , deleteProfile , getDataById , getAllUser , unsuspend} = require("../controller/users.js");
+const { register , profile , deleteProfile , getDataById , getAllUser , unsuspend, editPassword} = require("../controller/users.js");
 
 usersRouter.post("/",validate.body("email", "passwords", "phone_number", "role","name"),register);
 usersRouter.patch("/profile",isLogin(),validate.body("full_name","image","location","address","gender","no_rekening"),uploadFile,cloudinaryUploader,profile);
@@ -28,5 +28,6 @@ usersRouter.patch("/delete/:id",isLogin(),allowedRole('admin'),deleteProfile);
 usersRouter.get("/",isLogin(),getDataById)
 usersRouter.get('/search',getAllUser)
 usersRouter.patch('/unsuspend/:id',isLogin(),allowedRole('admin'),unsuspend)
+usersRouter.patch('/editpass', isLogin(), allowedRole('owner', 'customer'), validate.body("newpass", "confirmpass","oldpass") ,editPassword)
 
 module.exports = usersRouter;

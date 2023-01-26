@@ -73,13 +73,23 @@ const unsuspend = async (req,res) => {
   }
 }
 
+const editPassword = async (req, res) => {
+  try {
+    const response = await userRepo.editpwd(req.body.newpass, req.body.confirmpass ,req.body.oldpass, req.userPayload.user_id)
+    sendResponse.success(res,response.status,response)
+  } catch (error) {
+    sendResponse.error(res,error.status,error)
+  }
+}
+
 const userController = {
   register,
   profile,
   deleteProfile,
   getDataById,
   getAllUser,
-  unsuspend
+  unsuspend,
+  editPassword
 };
 
 module.exports = userController;

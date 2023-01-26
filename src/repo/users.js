@@ -182,13 +182,53 @@ const unsuspendUser = (id) => {
   })
 }
 
+const editpwd = (newpass, confirmpass ,oldpass,id) => {
+  return new Promise((resolve, reject) => {
+    const getPWDquery = `select password from users where id = $1`
+    if(newpass !== confirmpass) {
+      return reject({status:403, msg:"Confirm password not same with new password"})
+    }
+    postgreDb.query(getPWDquery,[id], (err, result) => {
+      if(err) {
+        console.log(err)
+        return reject({status:500,msg:"internal server error"})
+      }
+      const oldPwd = result.rows[0].password
+      bcrypt.compare(oldpass, oldPwd, (err, isSame) => {
+        if(err) {
+          console.log(err)
+          return reject({status:500,msg:"internal server error"})
+        }
+        if(!isSame){
+          return reject({status:403,msg:"Old password not same"})
+        }
+        bcrypt.hash(newpass, 10, (err, hashedPasswords) => {
+          if(err) {
+            console.log(err)
+            return reject({status:500,msg:"internal server error"})
+          }
+          const addQuery = `update users set password = $1 where id = $2`
+          postgreDb.query(addQuery, [hashedPasswords, id], (err, result) => {
+            if(err) {
+              console.log(err)
+              return reject({status:500,msg:"Internal server error"})
+            }
+            return resolve({status:200,msg:"Change password success"})
+          })
+        })
+      })
+    })
+  })
+}
+
 const userRepo = {
   register,
   profile,
   deleteUsers,
   getUsersById,
   unsuspendUser,
-  getAllUsers
+  getAllUsers,
+  editpwd
 };
 
 module.exports = userRepo;
