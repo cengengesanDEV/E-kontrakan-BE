@@ -116,7 +116,7 @@ const getTransactionsByStatus_booking = (id,status) => {
 const getStatusPaid = (id , status) => {
   return new Promise((resolve, reject) => {
     if(status === 'paid') {
-      const query = `SELECT tr.id, de.tipe_kontrakan, (SELECT full_name FROM users WHERE tr.id_users = id limit 1) AS customers, us.full_name AS owner, tr.checkin, tr.checkout, tr.status_booking, tr.order_date, tr.total_price, tr.payment_method, (SELECT image FROM image_transfer WHERE id_transaksi = tr.id limit 1) FROM transaction tr INNER JOIN detail_kontrakan AS de ON de.id = tr.id_kontrakan INNER JOIN category_kontrakan AS ca ON ca.id = de.id_kontrakan INNER JOIN users AS us ON us.id = ca.id_user WHERE us.id = 3 AND tr.status_booking = 'paid'`;
+      const query = `SELECT tr.id, de.tipe_kontrakan, (SELECT full_name FROM users WHERE tr.id_users = id limit 1) AS customers, us.full_name AS owner, tr.checkin, tr.checkout, tr.status_booking, tr.order_date, tr.total_price, tr.payment_method, (SELECT image FROM image_transfer WHERE id_transaksi = tr.id limit 1) FROM transaction tr INNER JOIN detail_kontrakan AS de ON de.id = tr.id_kontrakan INNER JOIN category_kontrakan AS ca ON ca.id = de.id_kontrakan INNER JOIN users AS us ON us.id = ca.id_user WHERE us.id = $1 AND tr.status_booking = 'paid'`;
     postgreDb.query(query, [id], (err, result) => {
       if (err) {
         console.log(err);
