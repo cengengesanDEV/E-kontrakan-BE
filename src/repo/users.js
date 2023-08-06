@@ -256,7 +256,7 @@ const changeForgot = (otp, newPassword) => {
         return reject({status:500,msg:"Internal server error"});
       }
       if (result.rows.length === 0) {
-        return reject({status:404,msg:"email wrong"});
+        return reject({status:404,msg:"OTP Wrong please Check your email correctly"});
       }
       bcrypt.hash(newPassword, 10, (error, hashedPassword) => {
         if (error) {
