@@ -96,6 +96,7 @@ const forgotPassword = async (req, res) => {
     await forgotMail(setSendEmail);
     sendResponse.success(res,response.status,response)
   } catch (error) {
+    console.log(error)
     sendResponse.error(res,error.status,error)
   }
 };

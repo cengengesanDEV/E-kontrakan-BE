@@ -239,7 +239,7 @@ const forgotPassword = (email) => {
       postgreDb.query(queryInsert, [pinActivation, email], (err, response) => {
         if (err) {
           console.log(err);
-          return reject({err});
+          return reject({status:500,msg:"Internal server error"});
         }
         return resolve({status:201,msg:'check your email',data:response.rows[0].pinforgot});
       });
