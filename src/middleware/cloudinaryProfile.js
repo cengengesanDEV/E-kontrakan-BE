@@ -3,7 +3,7 @@ const path = require("path");
 const cloudinary = require("../config/cloudinary");
 
 const uploader = async (req, res, next) => {
-    const { file,userPayload } = req;
+    const { file,userPayload ,body} = req;
     console.log({file,body})
     if (!file) return next();
 
