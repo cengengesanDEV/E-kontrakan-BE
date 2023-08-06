@@ -87,7 +87,6 @@ const payment = (body, image) => {
 
 const getHistoryCustomer = (status, id) => {
   return new Promise((resolve, reject) => {
-    console.log({id})
     const query =
       "select tr.id,de.tipe_kontrakan,(select image from image_kontrakan where de.id = id_detail_kontrakan and deleted_at is null limit 1) as image_kontrakan,(select full_name from users as us inner join category_kontrakan as ca on ca.id_user = us.id inner join detail_kontrakan as de on de.id_kontrakan = ca.id inner join transaction as tra on tra.id_kontrakan = de.id where tr.id = tra.id) as owner,(select no_rekening from users as us inner join category_kontrakan as ca on ca.id_user = us.id inner join detail_kontrakan as de on de.id_kontrakan = ca.id inner join transaction as trac on trac.id_kontrakan = de.id where tr.id = trac.id) as no_rekening,us.full_name as customer,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join users as us on us.id = tr.id_users where us.id = $1 and tr.status_booking = $2 and tr.deleted_at is null";
     postgreDb.query(query, [id, status], (err, result) => {
@@ -95,6 +94,11 @@ const getHistoryCustomer = (status, id) => {
         console.log(err);
         return reject({ status: 500, msg: "internal server error" });
       }
+      let totalIncome = 0
+      result.rows.map((value)=>{
+        totalIncome += value.total_price
+      })
+      result.rows.totalIncome = totalIncome 
       return resolve({ status: 200, msg: "history found", data: result.rows });
     });
   });
