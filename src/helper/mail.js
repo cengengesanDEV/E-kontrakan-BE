@@ -28,7 +28,7 @@ module.exports = {
         service: "gmail",
         auth: {
           type: "OAuth2",
-          user: "rivalalfalah10@gmail.com",
+          user: "nyengircengengesan@gmail.com",
           clientId,
           clientSecret,
           refreshToken,
@@ -43,7 +43,7 @@ module.exports = {
       // console.log(fileTemplate);
 
       const mailOptions = {
-        from: '"janjigacoffee" <rivalalfalah10@gmail.com>', // sender address
+        from: '"E-Kontrakan" <nyengircengengesan@gmail.com>', // sender address
         to: data.to, // list of receivers
         subject: data.subject, // Subject line
         html: mustache.render(fileTemplate, { ...data }),
