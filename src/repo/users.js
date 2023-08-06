@@ -271,9 +271,10 @@ const changeForgot = (otp, newPassword) => {
         postgreDb.query(insetQuery, [hashedPassword, otp], (error, result) => {
           if (error) {
             console.log(error);
+            console.log('coba kalo disini')
             return reject({status:500,msg:"Internal server error"})
           }
-          return resolve({status:201,msg:'Change Password Successfuly'});
+          resolve({status:201,msg:'Change Password Successfuly',data:result.rows});
         });
       });
     });
