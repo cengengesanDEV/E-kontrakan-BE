@@ -82,6 +82,34 @@ const editPassword = async (req, res) => {
   }
 }
 
+const forgotPassword = async (req, res) => {
+  try {
+    const response = await userRepo.forgotPassword(req.params.email);
+    const setSendEmail = {
+      to: req.params.email,
+      subject: " Reset Pasword",
+      mail:req.params.email,
+      template: "forgotEmail.html",
+      otp: `${response.data}`,
+    };
+    await forgotMail(setSendEmail);
+    sendResponse.success(res,response.status,response)
+  } catch (error) {
+    sendResponse.error(res,error.status,error)
+  }
+};
+
+const forgotChange = async (req, res) => {
+  try {
+    const { otp, password } = req.body;
+    console.log(req.body);
+    await userRepo.changeForgot(otp, password);
+    sendResponse.success(res,response.status,response)
+  } catch (objErr) {
+    sendResponse.error(res,error.status,error)
+  }
+};
+
 const userController = {
   register,
   profile,
@@ -89,7 +117,9 @@ const userController = {
   getDataById,
   getAllUser,
   unsuspend,
-  editPassword
+  editPassword,
+  forgotPassword,
+  forgotChange
 };
 
 module.exports = userController;

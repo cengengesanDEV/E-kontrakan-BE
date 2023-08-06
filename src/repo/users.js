@@ -221,6 +221,62 @@ const editpwd = (newpass, confirmpass ,oldpass,id) => {
   })
 }
 
+const forgotPassword = (email) => {
+  return new Promise((resolve, reject) => {
+    const pinActivation = Math.floor(Math.random() * 1000000);
+    const query = "select email from users where email = $1";
+    postgreDb.query(query, [email], (err, result) => {
+      if (err) {
+        console.log(err);
+        return reject({status:500,msg:"Internal server error"})
+      }
+      if (result.rows.length === 0) {
+        return reject({status:404,msg:"email wrong"});
+      }
+
+      const queryInsert =
+        "update users set pinforgot = $1 where email = $2 returning pinforgot";
+      postgreDb.query(queryInsert, [pinActivation, email], (err, response) => {
+        if (err) {
+          console.log(err);
+          return reject({err});
+        }
+        return resolve({status:201,msg:'check your email',data:response.rows[0].pinforgot});
+      });
+    });
+  });
+};
+
+const changeForgot = (otp, newPassword) => {
+  return new Promise((resolve, reject) => {
+    const query = "select pinforgot from users where pinforgot = $1";
+    postgreDb.query(query, [otp], (error, result) => {
+      if (error) {
+        console.log(error);
+        return reject({ error });
+      }
+      if (result.rows.length === 0) {
+        return reject({status:404,msg:"email wrong"});
+      }
+      bcrypt.hash(newPassword, 10, (error, hashedPassword) => {
+        if (error) {
+          console.log(error);
+          return reject({status:500,msg:"Internal server error"})
+        }
+        const insetQuery =
+          "update users set pinforgot = null,passwords = $1 where pinforgot = $2";
+        postgreDb.query(insetQuery, [hashedPassword, otp], (error, result) => {
+          if (error) {
+            console.log(error);
+            return reject({status:500,msg:"Internal server error"})
+          }
+          return resolve({status:201,msg:'Change Password Successfuly'});
+        });
+      });
+    });
+  });
+};
+
 const userRepo = {
   register,
   profile,
@@ -228,7 +284,9 @@ const userRepo = {
   getUsersById,
   unsuspendUser,
   getAllUsers,
-  editpwd
+  editpwd,
+  forgotPassword,
+  changeForgot
 };
 
 module.exports = userRepo;
