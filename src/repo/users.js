@@ -250,6 +250,7 @@ const forgotPassword = (email) => {
 const changeForgot = (otp, newPassword) => {
   return new Promise((resolve, reject) => {
     const query = "select pinforgot from users where pinforgot = $1";
+    console.log('sini')
     postgreDb.query(query, [otp], (error, result) => {
       if (error) {
         console.log(error);
@@ -258,6 +259,7 @@ const changeForgot = (otp, newPassword) => {
       if (result.rows.length === 0) {
         return reject({status:404,msg:"OTP Wrong please Check your email correctly"});
       }
+      console.log('sesudah mau hash')
       bcrypt.hash(newPassword, 10, (error, hashedPassword) => {
         if (error) {
           console.log(error);
@@ -265,6 +267,7 @@ const changeForgot = (otp, newPassword) => {
         }
         const insetQuery =
           "update users set pinforgot = null,password = $1 where pinforgot = $2";
+          console.log('sebelum ini')
         postgreDb.query(insetQuery, [hashedPassword, otp], (error, result) => {
           if (error) {
             console.log(error);
