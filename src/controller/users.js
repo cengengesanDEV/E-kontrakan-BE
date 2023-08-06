@@ -105,7 +105,7 @@ const forgotChange = async (req, res) => {
   try {
     const { otp, password } = req.body;
     console.log(req.body);
-    await userRepo.changeForgot(otp, password);
+    const response = await userRepo.changeForgot(otp, password);
     sendResponse.success(res,response.status,response)
   } catch (error) {
     sendResponse.error(res,error.status,error)
