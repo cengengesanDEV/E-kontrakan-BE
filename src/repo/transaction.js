@@ -95,11 +95,10 @@ const getHistoryCustomer = (status, id) => {
         return reject({ status: 500, msg: "internal server error" });
       }
       let totalIncome = 0
-      result.rows.map((value)=>{
+      result?.rows?.map((value)=>{
         totalIncome += value.total_price
       })
-      result.rows.totalIncome = totalIncome 
-      return resolve({ status: 200, msg: "history found", data: result.rows });
+      return resolve({ status: 200, msg: "history found", data: {data:result.rows,totalIncome} });
     });
   });
 };
