@@ -79,7 +79,7 @@ const profile = (body, token) => {
       if (idx === array.length - 1) {
         query += `${key} = $${idx + 1} where id = $${
           idx + 2
-        } returning full_name,location,role,email,address,id,phone_number,image,gender,no_rekening`;
+        } returning full_name,location,role,email,address,id,phone_number,image,gender,no_rekening,image_ktp,no_ktp`;
         values.push(body[key], token);
         return;
       }
@@ -122,7 +122,7 @@ const deleteUsers = (id, msg) => {
 const getUsersById = (id) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select id,role,full_name,phone_number,email,image,gender,location,address,no_rekening from users where id = $1";
+      "select id,role,full_name,phone_number,email,image,gender,location,address,no_rekening,image_ktp,no_ktp from users where id = $1";
     postgreDb.query(query, [id], (error, result) => {
       if (error) {
         console.log(error);
