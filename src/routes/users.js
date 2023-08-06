@@ -23,7 +23,7 @@ function uploadFile(req, res, next) {
 const { register , profile , deleteProfile , getDataById , getAllUser , unsuspend, editPassword, forgotPassword,forgotChange} = require("../controller/users.js");
 
 usersRouter.post("/",validate.body("email", "passwords", "phone_number", "role","name"),register);
-usersRouter.patch("/profile",isLogin(),validate.body("full_name","image","location","address","gender","no_rekening"),uploadFile,cloudinaryUploader,profile);
+usersRouter.patch("/profile",isLogin(),uploadFile,cloudinaryUploader,profile);
 usersRouter.patch("/delete/:id",isLogin(),allowedRole('admin'),deleteProfile);
 usersRouter.get("/",isLogin(),getDataById)
 usersRouter.get('/search',getAllUser)
