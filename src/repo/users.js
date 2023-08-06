@@ -264,7 +264,7 @@ const changeForgot = (otp, newPassword) => {
           return reject({status:500,msg:"Internal server error"})
         }
         const insetQuery =
-          "update users set pinforgot = null,passwords = $1 where pinforgot = $2";
+          "update users set pinforgot = null,password = $1 where pinforgot = $2";
         postgreDb.query(insetQuery, [hashedPassword, otp], (error, result) => {
           if (error) {
             console.log(error);
