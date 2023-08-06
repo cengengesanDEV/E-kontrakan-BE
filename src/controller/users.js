@@ -1,5 +1,6 @@
 const userRepo = require("../repo/users");
 const sendResponse = require("../helper/sendResponse");
+const { forgotMail } = require("../helper/forgotMail");
 
 const register = async (req, res) => {
   try {
