@@ -103,7 +103,7 @@ const getHistoryCustomer = (status, id) => {
 const getTransactionsByStatus_booking = (id,status) => {
   return new Promise((resolve, reject) => {
     const query =
-      "select tr.id,de.tipe_kontrakan,(select full_name from users where tr.id_users = id) as customers,us.full_name as owner,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where us.id = $1 and tr.status_booking = $2 and tr.deleted_at_owner is null";
+      "select tr.id,de.tipe_kontrakan,(select full_name from users where tr.id_users = id) as customers,(select no_ktp from users where tr.id_users = id) as no_ktp_customer,us.full_name as owner,tr.checkin,tr.checkout,tr.status_booking,tr.order_date,tr.total_price,tr.payment_method,(select image from image_kontrakan where id_detail_kontrakan = de.id limit 1) from transaction tr inner join detail_kontrakan as de on de.id = tr.id_kontrakan inner join category_kontrakan as ca on ca.id = de.id_kontrakan inner join users as us on us.id = ca.id_user where us.id = $1 and tr.status_booking = $2 and tr.deleted_at_owner is null";
     postgreDb.query(query, [id,status], (err, result) => {
       if (err) {
         console.log(err);
