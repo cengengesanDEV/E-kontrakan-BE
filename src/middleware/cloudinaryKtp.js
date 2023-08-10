@@ -10,7 +10,7 @@ const uploader = async (req, res, next) => {
     const buffer = file.buffer;
     const ext = path.extname(file.originalname).toString();
     const datauri = parser.format(ext, buffer);
-    const fileName = `users:${userPayload.user_id}`;
+    const fileName = `users:${userPayload.user_id}-KTP`;
     const cloudinaryOpt = {
         public_id: fileName,
         folder: "E-Kontrakan",

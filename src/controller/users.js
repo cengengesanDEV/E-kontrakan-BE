@@ -37,6 +37,26 @@ const profile = async (req, res) => {
   }
 };
 
+const postKtp = async (req, res) => {
+  try {
+    if (req.file) {
+      var image = `/${req.file.public_id}.${req.file.format}`;
+    }
+
+    const response = await userRepo.postKtp(req.file.secure_url, req.userPayload.user_id);
+    
+    sendResponse.success(res, 200, {
+      msg: "add ktp success",
+      data: response.rows,
+      filename: image,
+    });
+
+  } catch (err) {
+    console.log(err);
+    sendResponse.error(res, 500, "internal server error");
+  }
+};
+
 const deleteProfile = async (req, res) => {
   try {
       const response = await userRepo.deleteUsers(req.params.id,req.body.msg)
@@ -121,7 +141,8 @@ const userController = {
   unsuspend,
   editPassword,
   forgotPassword,
-  forgotChange
+  forgotChange,
+  postKtp
 };
 
 module.exports = userController;
