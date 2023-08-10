@@ -21,11 +21,24 @@ function uploadFile(req, res, next) {
   });
 }
 
+function uploadKtp(req, res, next) {
+  memoryUpload.single("image_ktp")(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+      return res.status(400).json({ msg: "Size to large" });
+    } else if (err) {
+      console.log(err)
+      return res.status(400).json({ msg: "Format Wrong" });
+    }
+    next();
+  });
+}
+
 const { register , profile , deleteProfile , getDataById , getAllUser , unsuspend, editPassword, forgotPassword,forgotChange,postKtp} = require("../controller/users.js");
 
 usersRouter.post("/",validate.body("email", "passwords", "phone_number", "role","name"),register);
 usersRouter.patch("/profile",isLogin(),uploadFile,cloudinaryUploader,profile);
-usersRouter.patch("/ktp",isLogin(),uploadFile,cloudinaryKtp,postKtp);
+usersRouter.patch("/ktp",isLogin(),uploadKtp,cloudinaryKtp,postKtp);
 usersRouter.patch("/delete/:id",isLogin(),allowedRole('admin'),deleteProfile);
 usersRouter.get("/",isLogin(),getDataById)
 usersRouter.get('/search',getAllUser)
