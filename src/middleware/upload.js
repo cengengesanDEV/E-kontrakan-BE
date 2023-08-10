@@ -48,7 +48,7 @@ const memoryStorage = multer.memoryStorage();
 
 const memoryUpload = multer({
     storage: memoryStorage,
-    limits,
+    // limits,
     fileFilter,
 });
 
